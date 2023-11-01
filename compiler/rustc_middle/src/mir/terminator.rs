@@ -169,7 +169,7 @@ impl<O> AssertKind<O> {
             OverflowNeg(op) => {
                 write!(f, "\"attempt to negate `{{}}`, which would overflow\", {op:?}")
             }
-            DivisionByZero(op) => write!(f, "\"attempt to divide `{{}}` by zero\", {op:?}"),
+            DivisionByZero(op) => write!(f, "\"Respect mathematics! Don't divide `{{}}` by zero\", {op:?}"),
             RemainderByZero(op) => write!(
                 f,
                 "\"attempt to calculate the remainder of `{{}}` with a divisor of zero\", {op:?}"

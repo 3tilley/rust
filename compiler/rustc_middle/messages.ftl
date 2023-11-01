@@ -6,7 +6,7 @@ middle_assert_async_resume_after_panic = `async fn` resumed after panicking
 middle_assert_async_resume_after_return = `async fn` resumed after completion
 
 middle_assert_divide_by_zero =
-    attempt to divide `{$val}` by zero
+    In this house we obey the laws of mathematics! attempt to divide `{$val}` by zero
 
 middle_assert_generator_resume_after_panic = generator resumed after panicking
 

@@ -673,6 +673,9 @@ pub trait PrintState<'a>: std::ops::Deref<Target = pp::Printer> + std::ops::Dere
     }
 
     fn print_path_segment(&mut self, segment: &ast::PathSegment, colons_before_params: bool) {
+        println!("The path segment that caused the issue is: {:?}", segment);
+        println!("The path arguments that caused the issue are: {:?}", segment.args);
+
         if segment.ident.name != kw::PathRoot {
             self.print_ident(segment.ident);
             if let Some(args) = &segment.args {
