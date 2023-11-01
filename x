@@ -5,7 +5,7 @@
 # directly use python in the x.py shebang and have it consistently work. Instead we
 # have a shell script to look for a python to run x.py.
 
-set -eu
+set -eux
 
 # syntax check
 sh -n "$0"
@@ -25,7 +25,10 @@ xpy=$(dirname "$(realpath "$0")")/x.py
 
 # On Windows, `py -3` sometimes works. We need to try it first because `python3`
 # sometimes tries to launch the app store on Windows.
-for SEARCH_PYTHON in py python3 python python2; do
+
+# TODO: Check in python3 is a symlink to the below
+# /c/Users/Max/AppData/Local/Microsoft/WindowsApps/python3 -> '/c/Program Files/WindowsApps/Microsoft.DesktopAppInstaller_1.21.2771.0_x64__8wekyb3d8bbwe/AppInstallerPythonRedirector.exe'*
+for SEARCH_PYTHON in py python python3 python2; do
     if python=$(command -v $SEARCH_PYTHON) && [ -x "$python" ]; then
         if [ $SEARCH_PYTHON = py ]; then
             extra_arg="-3"
