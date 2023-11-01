@@ -28,6 +28,7 @@ xpy=$(dirname "$(realpath "$0")")/x.py
 
 # TODO: Check in python3 is a symlink to the below
 # /c/Users/Max/AppData/Local/Microsoft/WindowsApps/python3 -> '/c/Program Files/WindowsApps/Microsoft.DesktopAppInstaller_1.21.2771.0_x64__8wekyb3d8bbwe/AppInstallerPythonRedirector.exe'*
+# See: https://github.com/rust-lang/rust/pull/117069
 for SEARCH_PYTHON in py python python3 python2; do
     if python=$(command -v $SEARCH_PYTHON) && [ -x "$python" ]; then
         if [ $SEARCH_PYTHON = py ]; then
