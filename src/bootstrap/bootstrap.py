@@ -82,12 +82,15 @@ def get(base, url, path, checksums, verbose=False):
 
 
 def download(path, url, probably_big, verbose):
-    for _ in range(4):
+    for i in range(4):
         try:
             _download(path, url, probably_big, verbose, True)
             return
-        except RuntimeError:
-            eprint("\nspurious failure, trying again")
+        except RuntimeError as exc:
+            if i < 2:
+                eprint("\nspurious failure, trying again")
+            else:
+                raise RuntimeError("Download failed too many times") from exc
     _download(path, url, probably_big, verbose, False)
 
 

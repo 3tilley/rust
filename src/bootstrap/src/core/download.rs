@@ -238,7 +238,7 @@ impl Config {
         if !self.check_run(&mut curl) {
             if self.build.contains("windows-msvc") {
                 eprintln!("Fallback to PowerShell");
-                for _ in 0..3 {
+                for i in 0..3 {
                     if try_run(self, Command::new("PowerShell.exe").args(&[
                         "/nologo",
                         "-Command",
@@ -250,7 +250,12 @@ impl Config {
                     ])).is_err() {
                         return;
                     }
-                    eprintln!("\nspurious failure, trying again");
+                    if i < 2 {
+                        eprintln!("\nspurious failure, trying again");
+                    } else {
+                        eprintln!("\ntoo many failures during download, exiting");
+                        crate::exit!(1);
+                    }
                 }
             }
             if !help_on_error.is_empty() {

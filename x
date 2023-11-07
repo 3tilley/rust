@@ -25,7 +25,7 @@ xpy=$(dirname "$(realpath "$0")")/x.py
 
 # On Windows, `py -3` sometimes works. We need to try it first because `python3`
 # sometimes tries to launch the app store on Windows.
-for SEARCH_PYTHON in py python3 python python2; do
+for SEARCH_PYTHON in py python python3 python2; do
     if python=$(command -v $SEARCH_PYTHON) && [ -x "$python" ]; then
         if [ $SEARCH_PYTHON = py ]; then
             extra_arg="-3"
