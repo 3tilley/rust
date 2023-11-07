@@ -560,6 +560,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
                 }
 
                 if let Some(missing_trait) = missing_trait {
+                    println!("I'm trying to find a missing trait {:?}", missing_trait);
                     if op.node == hir::BinOpKind::Add
                         && self.check_str_addition(
                             lhs_expr, rhs_expr, lhs_ty, rhs_ty, &mut err, is_assign, op,

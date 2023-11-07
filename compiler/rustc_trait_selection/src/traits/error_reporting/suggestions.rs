@@ -365,6 +365,20 @@ pub trait TypeErrCtxtExt<'tcx> {
         err: &mut Diagnostic,
         trait_ref: ty::PolyTraitRef<'tcx>,
     );
+
+    // fn suggest_missing_unwrap_expect(
+    //     &self,
+    //     err: &mut Diagnostic,
+    //     obligation: &PredicateObligation<'tcx>,
+    //     trait_ref: ty:
+    // )
+    fn suggest_missing_unwrap_expect(
+        &self,
+        // failed_pred: ty::Predicate<'tcx>,
+        // param_env: ty::ParamEnv<'tcx>,
+        err: &mut Diagnostic,
+        // expr: &hir::Expr<'_>,
+    );
 }
 
 fn predicate_constraint(generics: &hir::Generics<'_>, pred: ty::Predicate<'_>) -> (Span, String) {
@@ -3640,6 +3654,8 @@ impl<'tcx> TypeErrCtxtExt<'tcx> for TypeErrCtxt<'_, 'tcx> {
             }
         }
 
+        println!("call_node: {:?}", call_node);
+
         if let Some(Node::Expr(expr)) = hir.find(call_hir_id) {
             if let hir::ExprKind::Call(hir::Expr { span, .. }, _)
             | hir::ExprKind::MethodCall(
@@ -3654,6 +3670,7 @@ impl<'tcx> TypeErrCtxtExt<'tcx> for TypeErrCtxt<'_, 'tcx> {
 
             if let hir::ExprKind::MethodCall(_, expr, ..) = expr.kind {
                 self.suggest_option_method_if_applicable(failed_pred, param_env, err, expr);
+                // self.suggest_missing_unwrap_expect(failed_pred, param_env, err, expr);
             }
         }
     }
@@ -4294,6 +4311,83 @@ impl<'tcx> TypeErrCtxtExt<'tcx> for TypeErrCtxt<'_, 'tcx> {
             sugg,
             Applicability::MachineApplicable,
         );
+    }
+
+    // ParamEnv is details about the where clauses in scope
+    fn suggest_missing_unwrap_expect(
+        &self,
+        // failed_pred: ty::Predicate<'tcx>,
+        //param_env: ty::ParamEnv<'tcx>,
+        err: &mut Diagnostic,
+        //expr: &hir::Expr<'_>,
+    ) {
+        println!("We're going to check if there is an option or result that can be unwrapped");
+        let _tcx = self.tcx;
+        let _infcx = self.infcx;
+        let Some(_typeck_results) = self.typeck_results.as_ref() else { return };
+        println!("Err: {:?}", err);
+
+        // // Make sure we're dealing with the `Option` type.
+        // let Some(option_ty_adt) = typeck_results.expr_ty_adjusted(expr).ty_adt_def() else {
+        //     return;
+        // };
+        // if !tcx.is_diagnostic_item(sym::Option, option_ty_adt.did()) {
+        //     return;
+        // }
+
+        // // Given the predicate `fn(&T): FnOnce<(U,)>`, extract `fn(&T)` and `(U,)`,
+        // // then suggest `Option::as_deref(_mut)` if `U` can deref to `T`
+        // if let ty::PredicateKind::Clause(ty::ClauseKind::Trait(ty::TraitPredicate { trait_ref, .. }))
+        //     = failed_pred.kind().skip_binder()
+        //     && tcx.is_fn_trait(trait_ref.def_id)
+        //     && let [self_ty, found_ty] = trait_ref.args.as_slice()
+        //     && let Some(fn_ty) = self_ty.as_type().filter(|ty| ty.is_fn())
+        //     && let fn_sig @ ty::FnSig {
+        //     abi: abi::Abi::Rust,
+        //     c_variadic: false,
+        //     unsafety: hir::Unsafety::Normal,
+        //     ..
+        // } = fn_ty.fn_sig(tcx).skip_binder()
+        //
+        //     // Extract first param of fn sig with peeled refs, e.g. `fn(&T)` -> `T`
+        //     && let Some(&ty::Ref(_, target_ty, needs_mut)) = fn_sig.inputs().first().map(|t| t.kind())
+        //     && !target_ty.has_escaping_bound_vars()
+        //
+        //     // Extract first tuple element out of fn trait, e.g. `FnOnce<(U,)>` -> `U`
+        //     && let Some(ty::Tuple(tys)) = found_ty.as_type().map(Ty::kind)
+        //     && let &[found_ty] = tys.as_slice()
+        //     && !found_ty.has_escaping_bound_vars()
+        //
+        //     // Extract `<U as Deref>::Target` assoc type and check that it is `T`
+        //     && let Some(deref_target_did) = tcx.lang_items().deref_target()
+        //     && let projection = Ty::new_projection(tcx,deref_target_did, tcx.mk_args(&[ty::GenericArg::from(found_ty)]))
+        //     && let InferOk { value: deref_target, obligations } = infcx.at(&ObligationCause::dummy(), param_env).normalize(projection)
+        //     && obligations.iter().all(|obligation| infcx.predicate_must_hold_modulo_regions(obligation))
+        //     && infcx.can_eq(param_env, deref_target, target_ty)
+        // {
+        //     let help = if let hir::Mutability::Mut = needs_mut
+        //         && let Some(deref_mut_did) = tcx.lang_items().deref_mut_trait()
+        //         && infcx
+        //         .type_implements_trait(deref_mut_did, iter::once(found_ty), param_env)
+        //         .must_apply_modulo_regions()
+        //     {
+        //         Some(("call `Option::as_deref_mut()` first", ".as_deref_mut()"))
+        //     } else if let hir::Mutability::Not = needs_mut {
+        //         Some(("call `Option::as_deref()` first", ".as_deref()"))
+        //     } else {
+        //         None
+        //     };
+        //
+        //     if let Some((msg, sugg)) = help {
+        //         err.span_suggestion_with_style(
+        //             expr.span.shrink_to_hi(),
+        //             msg,
+        //             sugg,
+        //             Applicability::MaybeIncorrect,
+        //             SuggestionStyle::ShowAlways,
+        //         );
+        //     }
+        // }
     }
 }
 

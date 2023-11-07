@@ -368,6 +368,11 @@ impl<'tcx> TypeErrCtxtExt<'tcx> for TypeErrCtxt<'_, 'tcx> {
 
         let mut err = match *error {
             SelectionError::Unimplemented => {
+                println!("It doesn't look like this trait is implemented, doing some trait checking");
+                // println!("tcx: {:?}", tcx.);
+                println!("obligation: {:?}", obligation);
+                println!("obligation cause code: {:?}", *obligation.cause.code());
+                println!("root_obligation: {:?}", root_obligation);
                 // If this obligation was generated as a result of well-formedness checking, see if we
                 // can get a better error message by performing HIR-based well-formedness checking.
                 if let ObligationCauseCode::WellFormed(Some(wf_loc)) =
@@ -406,7 +411,10 @@ impl<'tcx> TypeErrCtxtExt<'tcx> for TypeErrCtxt<'_, 'tcx> {
                     return;
                 }
 
+
                 let bound_predicate = obligation.predicate.kind();
+                println!("Skip binder: {:?}", bound_predicate.skip_binder());
+
                 match bound_predicate.skip_binder() {
                     ty::PredicateKind::Clause(ty::ClauseKind::Trait(trait_predicate)) => {
                         let trait_predicate = bound_predicate.rebind(trait_predicate);
@@ -636,6 +644,8 @@ impl<'tcx> TypeErrCtxtExt<'tcx> for TypeErrCtxt<'_, 'tcx> {
                         self.note_version_mismatch(&mut err, &trait_ref);
                         self.suggest_remove_await(&obligation, &mut err);
                         self.suggest_derive(&obligation, &mut err, trait_predicate);
+
+                        self.suggest_missing_unwrap_expect(&mut err);
 
                         if Some(trait_ref.def_id()) == tcx.lang_items().try_trait() {
                             self.suggest_await_before_try(
