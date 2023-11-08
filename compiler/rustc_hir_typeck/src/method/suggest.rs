@@ -2020,6 +2020,9 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
         };
         match kind.adt_kind() {
             ty::AdtKind::Enum => {
+                println!("Making suggestions inside unwrapping inner");
+                println!("Source: {:?}", source);
+                println!("Actual: {:?}", actual);
                 let matching_variants: Vec<_> = kind
                     .variants()
                     .iter()

@@ -30,6 +30,11 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
             return;
         }
 
+        println!(
+            "Trying to check types after mismatch {:?}. Expected: {:?}. Formal error: {:?}",
+            err, expected, error
+        );
+
         self.annotate_alternative_method_deref(err, expr, error);
 
         // Use `||` to give these suggestions a precedence

@@ -1755,6 +1755,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
         expected: Ty<'tcx>,
         found: Ty<'tcx>,
     ) -> bool {
+        println!("Running missing unwrap expect");
         let ty::Adt(adt, args) = found.kind() else {
             return false;
         };

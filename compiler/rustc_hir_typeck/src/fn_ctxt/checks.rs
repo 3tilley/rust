@@ -158,6 +158,9 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
         fn_def_id: Option<DefId>,
     ) {
         let tcx = self.tcx;
+        println!("Checking types in the general function");
+        println!("call_span: {:?}", call_span);
+        println!("call_expr: {:?}", call_expr);
 
         // Conceptually, we've got some number of expected inputs, and some number of provided arguments
         // and we can form a grid of whether each argument could satisfy a given input:
